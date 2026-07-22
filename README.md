@@ -172,6 +172,7 @@ A API foi conectada a um **bot do Telegram**, permitindo que qualquer gerente co
 Procure no Telegram por **[@rossmann_proj_bot](https://t.me/rossmann_proj_bot)** e envie o número da loja desejada para receber o faturamento estimado para as próximas 6 semanas.
 
 **Exemplo:** para consultar a loja 21, basta enviar `/21` — a previsão é retornada automaticamente pelo bot.
+<img width="635" height="925" alt="image" src="https://github.com/user-attachments/assets/716b42ef-0827-4b4c-af5d-bc0095fe1c19" />
 
 ## 8. Considerações Finais e Próximos Passos
 
