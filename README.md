@@ -1,166 +1,125 @@
-O seu README técnico já está com uma estrutura de dados excelente, mas podemos transformá-lo em um documento muito mais **dinâmico, fluido e profissional**, perfeito para causar um impacto forte no GitHub e chamar a atenção de recrutadores.
+# 🏪 Rossmann Store Sales Prediction
 
-Para deixar o texto mais humanizado, removi o tom estritamente rígido de "lista de tarefas", troquei jargões engessados por explicações focadas em **resolução de problemas reais** e organizei o layout visual usando badges, marcadores e blocos bem definidos.
+Projeto de ciência de dados ponta a ponta (CRISP-DM) para prever as vendas das próximas 6 semanas das lojas da rede **Rossmann**, uma das maiores redes de farmácias da Europa. O projeto usa a base pública do desafio [Rossmann Store Sales](https://www.kaggle.com/c/rossmann-store-sales) do Kaggle.
 
-Aqui está a versão aprimorada para o seu `README.md`:
+## 📌 Problema de negócio
 
----
+O CFO da Rossmann precisa reformar as lojas da rede e, para isso, solicitou a cada gerente uma previsão de vendas para as próximas 6 semanas. Como as previsões variavam muito entre lojas (dependendo de fatores como sazonalidade, promoções, feriados, competição e portfólio de produtos), o time de Data Science assumiu o desafio de construir um modelo único capaz de prever as vendas de cada loja com maior precisão, entregando o resultado através de um bot no Telegram/API acessível pelos gerentes a qualquer momento.
 
-```markdown
-# 📊 Previsão de Vendas - Rede de Farmácias Rossmann
+## 🗂️ Estrutura do projeto (CRISP-DM)
 
-[![Python](https://img.shields.io/badge/Python-3.9-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![XGBoost](https://img.shields.io/badge/XGBoost-Regressor-111111?style=for-the-badge)](https://xgboost.readthedocs.io/)
-[![Flask](https://img.shields.io/badge/Flask-API-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.org/)
-[![Status](https://img.shields.io/badge/Status-Concluído-success?style=for-the-badge)]()
+O notebook está organizado seguindo o ciclo CRISP-DM:
 
-Uma solução end-to-end de Ciência de Dados para prever o faturamento de mais de 1.000 lojas da rede de farmácias Rossmann com 6 semanas de antecedência, fornecendo inteligência estratégica de negócio para o planejamento orçamentário da empresa.
+| Passo | Etapa |
+|---|---|
+| 1 | Descrição dos Dados (dimensão, tipos, valores ausentes, estatística descritiva) |
+| 2 | Feature Engineering (mapa mental de hipóteses + criação de novas variáveis) |
+| 3 | Filtragem de Variáveis (linhas e colunas) |
+| 4 | Análise Exploratória de Dados (univariada, bivariada e multivariada) |
+| 5 | Preparação dos Dados (normalização, rescaling, encoding, transformação cíclica) |
+| 6 | Feature Selection (Boruta) |
+| 7 | Machine Learning Modelling (baseline, modelos lineares, Random Forest, XGBoost) |
+| 8 | Hyperparameter Fine Tuning |
+| 9 | Tradução e Interpretação do Erro (impacto de negócio) |
+| 10 | Deploy do Modelo em Produção (API Flask + classe de pipeline) |
 
----
+## 🔎 Principais insights da análise exploratória
 
-## 🎯 O Desafio de Negócio
+Das 12 hipóteses de negócio levantadas, as validadas com os dados foram, entre outras:
 
-Planejar reformas e melhorias em infraestrutura exige previsibilidade financeira. O CFO da rede Rossmann precisava definir o orçamento dedicado à reforma de cada unidade, mas enfrentava um problema recorrente: **as previsões feitas pelos gerentes das lojas eram manuais e altamente inconsistentes**.
+- **Lojas com maior sortimento vendem menos** (contrário à hipótese inicial).
+- **Lojas com competidores mais próximos vendem mais.**
+- **Lojas com competidores há mais tempo vendem menos.**
+- **Lojas vendem mais depois do dia 10 de cada mês.**
+- **Lojas vendem menos nos finais de semana.**
+- **Lojas vendem menos durante feriados escolares** (exceto em julho e agosto).
 
-Fatores como sazonalidade, promoções contínuas, distância de concorrentes e feriados regionais distorciam as estimativas de cada gestor.
+## 🤖 Modelagem
 
-### A Solução
-Desenvolver um modelo de Machine Learning capaz de prever as vendas de cada loja de forma padronizada e precisa, entregando os resultados diretamente aos tomadores de decisão por meio de uma API em produção.
-
----
-
-## 💡 Principais Descobertas na Análise Exploratória (EDA)
-
-Durante o processo de validação das hipóteses de negócio, surgiram insights valiosos que contrariaram suposições iniciais do time:
-
-* 🏪 **Sortimento de Produtos vs. Volume de Vendas:** Lojas com maior variedade/sortimento de produtos apresentaram menor volume de vendas diárias em comparação às lojas com portfólio mais enxuto.
-* 🥊 **Proximidade dos Concorrentes:** Lojas com concorrentes mais próximos registraram vendas superiores. A presença de competidores vizinhos atua como um polo de atração de fluxo de clientes.
-* 📅 **Padrão Mensal de Consumo:** Há um pico claro de faturamento após o dia 10 de cada mês, coincidindo com as datas de pagamento da maior parte dos clientes.
-* 🏫 **Feriados Escolares:** As vendas tendem a cair em feriados escolares na maior parte do ano, com exceção do período de férias do meio de ano (julho e agosto), onde há um aumento expressivo.
-
----
-
-## 🛠️ Como o Modelo Foi Construído
-
-O projeto seguiu a metodologia **CRISP-DM**, garantindo um desenvolvimento organizado e focado em entregas de valor contínuas.
-
-
-```
-
-[Dados Brutos] ➔ [Limpeza e Feature Engineering] ➔ [Seleção Boruta] ➔ [Treinamento XGBoost] ➔ [API Flask]
-
-```
-
-### 1. Engenharia de Recursos & Seleção
-Foram criadas novas variáveis temporais e de perfil de loja. Para selecionar os atributos mais relevantes para o aprendizado e evitar overfitting, foi utilizado o algoritmo **Boruta**.
-
-### 2. Comparativo de Algoritmos
-Utilizou-se a estratégia de **Time-Series Cross-Validation** para respeitar a linha temporal dos dados durante a validação dos modelos:
+Foram testados e comparados diversos algoritmos de regressão, avaliados com validação cruzada em série temporal:
 
 | Modelo | MAE | MAPE | RMSE |
-| :--- | :---: | :---: | :---: |
-| Baseline (Média) | R$ 1.354,80 | 45,5% | R$ 1.835,14 |
-| Regressão Linear | R$ 1.867,09 | 29,3% | R$ 2.671,05 |
-| Linear Regression (Lasso) | R$ 1.891,70 | 28,9% | R$ 2.744,45 |
-| XGBoost Regressor | R$ 1.695,79 | 25,2% | R$ 2.478,40 |
-| **XGBoost Regressor (Tuned)** | **R$ 780,59** | **11,6%** | **R$ 1.128,89** |
+|---|---|---|---|
+| Average Model (baseline) | 1354.80 | 45.5% | 1835.14 |
+| Linear Regression | 1867.09 | 29.3% | 2671.05 |
+| Linear Regression - Lasso | 1891.70 | 28.9% | 2744.45 |
+| XGBoost Regressor | 1695.79 | 25.2% | 2478.40 |
+| **XGBoost Regressor (tuned)** | **780.59** | **11.6%** | **1128.89** |
 
-Após o ajuste de hiperparâmetros (Fine Tuning) via *Random Search*, o **XGBoost Regressor** reduziu o erro médio percentual (MAPE) para **11,6%**, superando significativamente todas as abordagens anteriores.
+O modelo final escolhido foi o **XGBoost Regressor**, com hiperparâmetros ajustados via Random Search, resultando em ganho expressivo de performance sobre o baseline.
+
+**Feature Selection:** utilização do algoritmo **Boruta** para seleção das variáveis mais relevantes para o modelo.
+
+## 💰 Resultado de negócio
+
+A previsão do modelo final para as próximas 6 semanas indicou um faturamento total estimado de:
+
+- **Cenário previsto:** R$ 285.544.032,00
+- **Pior cenário:** R$ 284.670.508,25
+- **Melhor cenário:** R$ 286.417.593,06
+
+O erro (MAE/MAPE) também foi avaliado por loja individualmente, permitindo identificar quais lojas têm previsões mais e menos confiáveis.
+
+## 🚀 Deploy em produção
+
+O modelo foi encapsulado em uma classe Python (`Rossmann`) responsável por replicar todo o pipeline de limpeza, feature engineering e preparação de dados usado no treinamento. Essa classe é consumida por uma **API REST em Flask**, que recebe os dados brutos da loja em formato JSON e devolve a previsão de vendas.
+
+Fluxo de deploy:
+
+1. `rossmann/Rossmann.py` — classe com os métodos `data_cleaning`, `feature_engineering`, `data_preparation` e `get_prediction`.
+2. `handler.py` — API Flask com o endpoint `POST /rossmann/predict`.
+3. API hospedada em produção (Render), consumida via requisições HTTP para gerar previsões em tempo real para os gerentes de loja.
+
+## 🛠️ Tecnologias utilizadas
+
+- **Linguagem:** Python 3.9
+- **Manipulação de dados:** pandas, numpy
+- **Visualização:** matplotlib, seaborn
+- **Machine Learning:** scikit-learn, xgboost, boruta
+- **Deploy:** Flask, Render
+- **Outros:** inflection, scipy, pickle
+
+## 📁 Estrutura de pastas sugerida
+
+```
+projeto-rossmann/
+├── data/
+│   └── raw/                # train.csv, store.csv, test.csv (dados do Kaggle)
+├── parameter/               # scalers e encoders salvos (.pkl)
+├── model/                   # modelo treinado (.pkl)
+├── rossmann/
+│   └── Rossmann.py          # classe do pipeline de produção
+├── handler.py                # API Flask
+├── m10_v01_store_sales_prediction.ipynb   # notebook com o ciclo completo do projeto
+└── README.md
+```
+
+## ▶️ Como reproduzir
+
+1. Clone o repositório e baixe os dados do [Kaggle - Rossmann Store Sales](https://www.kaggle.com/c/rossmann-store-sales) em `data/raw/`.
+2. Instale as dependências:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Execute o notebook `m10_v01_store_sales_prediction.ipynb` para reproduzir todo o ciclo de análise e treinamento.
+4. Para subir a API localmente:
+   ```bash
+   python handler.py
+   ```
+5. Faça uma requisição de teste:
+   ```python
+   import requests, json
+   data = json.dumps(df_test.to_dict(orient='records'))
+   r = requests.post('http://0.0.0.0:5000/rossmann/predict',
+                      data=data, headers={'Content-type': 'application/json'})
+   ```
+
+## 📈 Próximos passos
+
+- Testar novos algoritmos (LightGBM, redes neurais) e comparar performance.
+- Automatizar o retraining do modelo com novos dados.
+- Expandir a entrega das previsões via bot do Telegram.
 
 ---
 
-## 📈 Impacto Financeiro e Resultados de Negócio
-
-Para traduzir as métricas estatísticas em valores palpáveis para a diretoria, o modelo simulou três cenários de arrecadação para as 6 semanas seguintes:
-
-* 🟢 **Cenário Otimista:** R$ 286.417.593,06
-* 🎯 **Cenário Esperado:** R$ 285.544.032,00
-* 🔴 **Cenário Pessimista:** R$ 284.670.508,25
-
-Com essa faixa de variação restrita e previsível, o CFO consegue definir o orçamento de investimentos para reforma das lojas com total segurança financeira.
-
----
-
-## 🚀 Arquitetura de Deploy
-
-A solução final foi estruturada para ser consumida de forma simples e escalável:
-
-1. **Classe do Pipeline (`Rossmann.py`):** Encapsula todo o pré-processamento, aplicação de encoders e transformações cíclicas desenvolvidas no projeto.
-2. **API REST (`handler.py`):** Construída com **Flask**, expõe um endpoint POST (`/rossmann/predict`) que recebe dados em formato JSON.
-3. **Nuvem:** Servidor hospedado na plataforma **Render**, permitindo consultas em tempo real de qualquer dispositivo conectado à rede.
-
----
-
-## 📂 Estrutura do Repositório
-
-```bash
-├── data/              # Conjunto de dados (Brutos e Processados)
-├── parameter/         # Encoders e Scalers serializados (.pkl)
-├── model/             # Modelo treinado (.pkl)
-├── rossmann/          # Módulo Python com o pipeline do modelo
-│   └── Rossmann.py
-├── handler.py         # Script da API Flask para produção
-├── notebook.ipynb     # Análise completa, testes e modelagem
-└── requirements.txt   # Bibliotecas e dependências do projeto
-
-```
-
----
-
-## 💻 Como Executar o Projeto Localmente
-
-### Pré-requisitos
-
-* Python 3.9+ instalado
-* Git configurado
-
-### Passo a passo
-
-1. **Clone o repositório:**
-```bash
-git clone [https://github.com/seu-usuario/projeto-rossmann.git](https://github.com/seu-usuario/projeto-rossmann.git)
-cd projeto-rossmann
-
-```
-
-
-2. **Crie e ative um ambiente virtual:**
-```bash
-python -m venv .venv
-source .venv/bin/activate  # No Windows: .venv\Scripts\activate
-
-```
-
-
-3. **Instale as dependências:**
-```bash
-pip install -r requirements.txt
-
-```
-
-
-4. **Inicie a API local:**
-```bash
-python handler.py
-
-```
-
-
-5. **Testando a previsão:**
-Em outro terminal ou script Python, envie um payload JSON com as características das lojas para `http://localhost:5000/rossmann/predict`.
-
----
-
-## 🔮 Próximos Passos
-
-* [ ] Experimentar algoritmos baseados em LightGBM e Redes Neurais para ganho de performance.
-* [ ] Implementar monitoramento contínuo da API para detectar Data Drift.
-* [ ] Conectar a API a um bot interativo do Telegram para facilitar a consulta dos gerentes em campo.
-
----
-
-✉️ **Contato:** Entre em contato ou acesse meu LinkedIn para conversar sobre este ou outros projetos de Ciência de Dados!
-
-```
-
-```
+Projeto desenvolvido para fins de estudo em Ciência de Dados, com base no dataset público do desafio Rossmann Store Sales (Kaggle).
